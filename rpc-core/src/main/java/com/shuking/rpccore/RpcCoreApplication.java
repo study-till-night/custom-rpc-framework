@@ -40,7 +40,7 @@ public class RpcCoreApplication {
     }
 
     /**
-     * 获取当前配置
+     * 获取当前配置   首次读取配置会进行初始化
      * @return
      */
     public static RpcConfig getRpcConfig() {

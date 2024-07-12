@@ -18,4 +18,9 @@ public class RpcConfig {
     private String serverHost = "127.0.0.1";
 
     private Integer port = 8080;
+
+    /**
+     * 是否开启mock
+     */
+    private Boolean mock = false;
 }

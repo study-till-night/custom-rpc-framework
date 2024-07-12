@@ -36,7 +36,7 @@ public class ServiceProxy implements InvocationHandler {
         try {
             byte[] bytes = jdkSerializer.serialize(rpcRequest);
             // todo 使用注册中心动态传递服务地址
-            HttpResponse response = HttpRequest.post("http://localhost:8080").body(bytes).execute();
+            HttpResponse response = HttpRequest.post("http://localhost:8081").body(bytes).execute();
             byte[] responseBytes = response.bodyBytes();
             RpcResponse rpcResponse = jdkSerializer.deserialize(responseBytes, RpcResponse.class);
             return rpcResponse.getData();

@@ -9,5 +9,7 @@ public interface PlayerService {
 
     List<Player> searchPlayerList(String content);
 
-
+    default int getNumber() {
+        return 1;
+    }
 }
