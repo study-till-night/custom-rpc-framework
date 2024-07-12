@@ -2,10 +2,12 @@ package com.shuking.serviceconsumer.proxy;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import com.shuking.rpcsimple.model.RpcRequest;
-import com.shuking.rpcsimple.model.RpcResponse;
-import com.shuking.rpcsimple.serializer.JdkSerializer;
-import com.shuking.rpcsimple.serializer.Serializer;
+
+
+import com.shuking.rpccore.model.RpcRequest;
+import com.shuking.rpccore.model.RpcResponse;
+import com.shuking.rpccore.serializer.JdkSerializer;
+import com.shuking.rpccore.serializer.Serializer;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.InvocationHandler;
@@ -33,6 +35,7 @@ public class ServiceProxy implements InvocationHandler {
         // 向服务提供者发送请求
         try {
             byte[] bytes = jdkSerializer.serialize(rpcRequest);
+            // todo 使用注册中心动态传递服务地址
             HttpResponse response = HttpRequest.post("http://localhost:8080").body(bytes).execute();
             byte[] responseBytes = response.bodyBytes();
             RpcResponse rpcResponse = jdkSerializer.deserialize(responseBytes, RpcResponse.class);

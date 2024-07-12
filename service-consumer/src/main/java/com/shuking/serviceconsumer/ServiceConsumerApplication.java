@@ -2,6 +2,8 @@ package com.shuking.serviceconsumer;
 
 import com.shuking.common.model.Player;
 import com.shuking.common.services.PlayerService;
+import com.shuking.rpccore.config.RpcConfig;
+import com.shuking.rpccore.utils.ConfigUtil;
 import com.shuking.serviceconsumer.proxy.ServiceProxyFactory;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +25,8 @@ public class ServiceConsumerApplication {
             } else {
                 log.error("call failed");
             }
+
         }
+
     }
 }

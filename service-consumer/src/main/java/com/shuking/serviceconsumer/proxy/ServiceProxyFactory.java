@@ -13,8 +13,10 @@ public class ServiceProxyFactory {
      * @return 代理增强后的服务类
      */
     public static <T> T getProxy(Class<T> serviceClass) {
-        if (Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, new ServiceProxy()) != null) {
-            return (T) Proxy.newProxyInstance(serviceClass.getClassLoader(), new Class[]{serviceClass}, new ServiceProxy());
+        Object serviceProxy = Proxy.newProxyInstance(serviceClass.getClassLoader(),
+                new Class[]{serviceClass}, new ServiceProxy());
+        if (serviceProxy != null) {
+            return (T) serviceProxy;
         }
         return null;
     }

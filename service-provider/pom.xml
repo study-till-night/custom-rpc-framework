@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>com.shuking</groupId>
-            <artifactId>rpc-simple</artifactId>
+            <artifactId>rpc-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

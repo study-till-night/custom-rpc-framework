@@ -1,10 +1,11 @@
-package com.shuking.rpcsimple.server;
+package com.shuking.rpccore.server;
 
-import com.shuking.rpcsimple.model.RpcRequest;
-import com.shuking.rpcsimple.model.RpcResponse;
-import com.shuking.rpcsimple.registry.LocalRegistry;
-import com.shuking.rpcsimple.serializer.JdkSerializer;
-import com.shuking.rpcsimple.serializer.Serializer;
+
+import com.shuking.rpccore.model.RpcRequest;
+import com.shuking.rpccore.model.RpcResponse;
+import com.shuking.rpccore.registry.LocalRegistry;
+import com.shuking.rpccore.serializer.JdkSerializer;
+import com.shuking.rpccore.serializer.Serializer;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -58,10 +59,10 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
 
             try {
                 // 利用反射得到要执行的方法
-                Class<?> serviceImplClass = LocalRegistry.get(rpcRequest.getServiceName());
-                Method method = serviceImplClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsTypes());
+                Class<?> serviceClass = LocalRegistry.get(rpcRequest.getServiceName());
+                Method method = serviceClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsTypes());
                 // 得到方法执行结果
-                Object result = method.invoke(serviceImplClass.getDeclaredConstructor().newInstance(), rpcRequest.getParams());
+                Object result = method.invoke(serviceClass.newInstance(), rpcRequest.getParams());
 
                 rpcResponse.setData(result);
                 rpcResponse.setDataType(method.getReturnType());

@@ -1,8 +1,11 @@
 package com.shuking.serviceprovider;
 
 import com.shuking.common.services.PlayerService;
-import com.shuking.rpcsimple.registry.LocalRegistry;
-import com.shuking.rpcsimple.server.VertxHttpServer;
+import com.shuking.rpccore.RpcCoreApplication;
+import com.shuking.rpccore.config.RpcConfig;
+import com.shuking.rpccore.registry.LocalRegistry;
+import com.shuking.rpccore.server.VertxHttpServer;
+import com.shuking.rpccore.utils.ConfigUtil;
 import com.shuking.serviceprovider.service.impl.PlayerServiceImpl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,12 +13,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ServiceProviderApplication {
 
     public static void main(String[] args) {
-        // SpringApplication.run(ServiceProviderApplication.class, args);
-        VertxHttpServer vertxHttpServer = new VertxHttpServer();
-        vertxHttpServer.doStart(8080);
+
+        // RPC框架初始化
+        // RpcConfig rpcConfig = ConfigUtil.loadConfig(RpcConfig.class);
+        // RpcCoreApplication.init(rpcConfig);
+        RpcCoreApplication.init();
 
         // 进行服务注册   注意值为实现类而不是接口
         LocalRegistry.register(PlayerService.class.getName(), PlayerServiceImpl.class);
+
+        VertxHttpServer vertxHttpServer = new VertxHttpServer();
+        vertxHttpServer.doStart(RpcCoreApplication.getRpcConfig().getPort());
+
     }
 
 }

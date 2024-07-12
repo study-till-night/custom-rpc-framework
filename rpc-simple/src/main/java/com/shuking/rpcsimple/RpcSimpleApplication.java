@@ -10,7 +10,6 @@ public class RpcSimpleApplication {
 
     public static void main(String[] args) {
         // SpringApplication.run(RpcSimpleApplication.class, args);
-
     }
 
 }
