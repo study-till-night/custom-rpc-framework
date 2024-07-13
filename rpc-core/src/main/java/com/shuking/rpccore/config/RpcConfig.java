@@ -1,5 +1,7 @@
 package com.shuking.rpccore.config;
 
+import com.shuking.rpccore.serializer.Serializer;
+import com.shuking.rpccore.serializer.SerializerEnum;
 import lombok.Data;
 
 @Data
@@ -23,4 +25,9 @@ public class RpcConfig {
      * 是否开启mock
      */
     private Boolean mock = false;
+
+    /**
+     * 选择的序列化器
+     */
+    private String  serializer= SerializerEnum.JDK.serializerName;
 }

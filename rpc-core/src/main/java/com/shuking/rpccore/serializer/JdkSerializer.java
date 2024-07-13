@@ -1,11 +1,14 @@
 package com.shuking.rpccore.serializer;
 
+import lombok.ToString;
+
 import java.io.*;
 
 /**
  * JDK 序列化器
  *
  */
+@ToString
 public class JdkSerializer implements Serializer {
 
     /**

@@ -4,6 +4,7 @@ import com.shuking.rpccore.config.RpcConfig;
 import com.shuking.rpccore.utils.ConfigUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Log4j2
 @Component
+@SpringBootApplication
 public class RpcCoreApplication {
 
     // 单例模式 维护全局唯一配置

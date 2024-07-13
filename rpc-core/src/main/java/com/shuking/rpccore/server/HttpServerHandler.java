@@ -1,11 +1,12 @@
 package com.shuking.rpccore.server;
 
 
+import com.shuking.rpccore.RpcCoreApplication;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.registry.LocalRegistry;
-import com.shuking.rpccore.serializer.JdkSerializer;
 import com.shuking.rpccore.serializer.Serializer;
+import com.shuking.rpccore.serializer.SerializerFactory;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
@@ -33,8 +34,16 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
     @Override
     public void handle(HttpServerRequest httpServerRequest) {
 
-        // 序列化器
-        final Serializer jdkSerializer = new JdkSerializer();
+        // 获取配置文件中的序列化器
+        String serializerKey = RpcCoreApplication.getRpcConfig().getSerializer();
+
+        /*
+         使用枚举类实现动态获取
+        Serializer serializer = SerializerEnum.getSerializerByKey(serializerKey);
+         */
+
+        // 使用自定义spi实现动态获取
+        Serializer serializer = SerializerFactory.getInstance(serializerKey);
 
         log.info("received request: {},{}", httpServerRequest.method().toString(), httpServerRequest.uri());
 
@@ -43,7 +52,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
             byte[] bytes = body.getBytes();
             RpcRequest rpcRequest = null;
             try {
-                rpcRequest = jdkSerializer.deserialize(bytes, RpcRequest.class);
+                rpcRequest = serializer.deserialize(bytes, RpcRequest.class);
             } catch (Exception e) {
                 log.error("反序列化时出错:{}", e.getMessage());
             }
@@ -53,7 +62,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
             if (rpcRequest == null) {
                 rpcResponse.setMessage("rpc请求体为空");
                 // 执行响应
-                doResponse(httpServerRequest, rpcResponse, jdkSerializer);
+                doResponse(httpServerRequest, rpcResponse, serializer);
                 return;
             }
 
@@ -74,7 +83,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
                 log.error("对方法进行反射时报错:{}", e.getMessage());
             }
             // 执行响应
-            doResponse(httpServerRequest, rpcResponse, jdkSerializer);
+            doResponse(httpServerRequest, rpcResponse, serializer);
         });
 
     }

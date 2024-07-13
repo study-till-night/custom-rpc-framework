@@ -16,8 +16,6 @@ public class ServiceConsumerApplication {
 
         if (playerServiceWithProxy != null) {
             List<Player> playerList = playerServiceWithProxy.searchPlayerList("shuking");
-            System.out.println(playerList);
-            System.out.println(playerServiceWithProxy.getNumber());
 
             if (playerList != null) {
                 log.info("call success");
