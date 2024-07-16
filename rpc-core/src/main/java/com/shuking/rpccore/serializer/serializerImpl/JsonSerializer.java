@@ -1,8 +1,9 @@
-package com.shuking.rpccore.serializer;
+package com.shuking.rpccore.serializer.serializerImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
+import com.shuking.rpccore.serializer.Serializer;
 
 import java.io.IOException;
 

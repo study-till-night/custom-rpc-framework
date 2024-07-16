@@ -1,1 +1,1 @@
-com.shuking.rpccore.serializer.JdkSerializer
+com.shuking.rpccore.serializer.serializerImpl.JdkSerializer

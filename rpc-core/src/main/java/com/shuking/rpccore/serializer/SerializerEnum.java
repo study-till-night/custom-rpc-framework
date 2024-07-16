@@ -1,5 +1,10 @@
 package com.shuking.rpccore.serializer;
 
+import com.shuking.rpccore.serializer.serializerImpl.HessianSerializer;
+import com.shuking.rpccore.serializer.serializerImpl.JdkSerializer;
+import com.shuking.rpccore.serializer.serializerImpl.JsonSerializer;
+import com.shuking.rpccore.serializer.serializerImpl.KryoSerializer;
+
 public enum SerializerEnum {
     JDK("jdk", new JdkSerializer()),
     JSON("json", new JsonSerializer()),

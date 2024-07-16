@@ -1,5 +1,6 @@
-package com.shuking.rpccore.serializer;
+package com.shuking.rpccore.serializer.serializerImpl;
 
+import com.shuking.rpccore.serializer.Serializer;
 import lombok.ToString;
 
 import java.io.*;

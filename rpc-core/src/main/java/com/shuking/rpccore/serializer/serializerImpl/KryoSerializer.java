@@ -1,8 +1,9 @@
-package com.shuking.rpccore.serializer;
+package com.shuking.rpccore.serializer.serializerImpl;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.shuking.rpccore.serializer.Serializer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

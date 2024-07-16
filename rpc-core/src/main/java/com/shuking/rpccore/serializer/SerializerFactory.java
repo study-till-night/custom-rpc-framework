@@ -2,6 +2,7 @@ package com.shuking.rpccore.serializer;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.shuking.rpccore.serializer.serializerImpl.JdkSerializer;
 import com.shuking.rpccore.utils.SpiUtil;
 
 /**
@@ -10,6 +11,7 @@ import com.shuking.rpccore.utils.SpiUtil;
  */
 public class SerializerFactory {
 
+    // 在类初始化时执行序列化器的spi加载
     static {
         SpiUtil.loadSingle(Serializer.class);
     }

@@ -77,6 +77,7 @@ public class SpiUtil {
                     }
 
                 } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
                     log.error("读取spi配置文件出错:{}", e.getMessage());
                 }
             }
@@ -107,7 +108,7 @@ public class SpiUtil {
             T instance;
             // 如果缓存中有则直接取缓存 否则加入缓存
             if (instanceCacheMap.containsKey(classTypeName)) {
-                instance = (T) instanceCacheMap.get(key);
+                instance = (T) instanceCacheMap.get(classTypeName);
             }
             else {
                 instance = (T) (implClass.getConstructor().newInstance());

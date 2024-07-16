@@ -1,11 +1,16 @@
 package com.shuking.rpccore.config;
 
-import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerEnum;
+import jakarta.annotation.Resource;
 import lombok.Data;
 
+/**
+ * 服务自身配置
+ */
 @Data
 public class RpcConfig {
+
+    private RegistryConfig registryConfig=new RegistryConfig();
 
     /**
      * 名称
@@ -29,5 +34,5 @@ public class RpcConfig {
     /**
      * 选择的序列化器
      */
-    private String  serializer= SerializerEnum.JDK.serializerName;
+    private String serializer = SerializerEnum.JDK.serializerName;
 }

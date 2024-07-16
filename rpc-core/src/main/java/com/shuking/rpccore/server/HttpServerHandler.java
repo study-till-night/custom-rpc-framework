@@ -2,9 +2,14 @@ package com.shuking.rpccore.server;
 
 
 import com.shuking.rpccore.RpcCoreApplication;
+import com.shuking.rpccore.config.RpcConfig;
+import com.shuking.rpccore.constant.RpcConstants;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
+import com.shuking.rpccore.model.ServiceMetaInfo;
 import com.shuking.rpccore.registry.LocalRegistry;
+import com.shuking.rpccore.registry.RegistryFactory;
+import com.shuking.rpccore.registry.RemoteRegistry;
 import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerFactory;
 import io.vertx.core.Handler;
@@ -69,6 +74,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
             try {
                 // 利用反射得到要执行的方法
                 Class<?> serviceClass = LocalRegistry.get(rpcRequest.getServiceName());
+
                 Method method = serviceClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsTypes());
                 // 得到方法执行结果
                 Object result = method.invoke(serviceClass.newInstance(), rpcRequest.getParams());

@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: rpc-core
+
+
+rpc:
+  registry:
+    center-address: 127.0.0.1
+    center-port: 6379
+    registry-type: redis
+    timeout: 20000
