@@ -35,4 +35,15 @@ public interface RemoteRegistry {
      * 销毁连接
      */
     void centerBoom();
+
+    /**
+     * 心跳检测
+     */
+    void heartBeat();
+
+    /**
+     * 服务监听(消费)
+     * @param serviceNodeKey redis服务键值
+     */
+    void watch(String serviceNodeKey);
 }

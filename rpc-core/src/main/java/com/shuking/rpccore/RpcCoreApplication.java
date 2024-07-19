@@ -6,16 +6,11 @@ import com.shuking.rpccore.registry.RegistryFactory;
 import com.shuking.rpccore.registry.RemoteRegistry;
 import com.shuking.rpccore.utils.ConfigUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Component;
 
 /**
  * 配置读取操作类
  */
 @Log4j2
-@Component
-@SpringBootApplication
 public class RpcCoreApplication {
 
     // 单例模式 维护全局唯一配置
@@ -23,6 +18,7 @@ public class RpcCoreApplication {
 
     /**
      * 自定义配置初始化
+     *
      * @param customRpcConfig 自定义配置
      */
     public static void init(RpcConfig customRpcConfig) {
@@ -44,13 +40,14 @@ public class RpcCoreApplication {
             registry.init(registryConfig);
 
         } catch (Exception e) {
-            log.error("rpc框架初始化出错--{}",e.getMessage());
+            log.error("rpc框架初始化出错--{}", e.getMessage());
             rpcConfig = new RpcConfig();
         }
     }
 
     /**
      * 获取当前配置   首次读取配置会进行初始化
+     *
      * @return
      */
     public static RpcConfig getRpcConfig() {
