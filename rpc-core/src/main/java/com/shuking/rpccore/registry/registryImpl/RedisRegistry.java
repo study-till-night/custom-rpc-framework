@@ -79,7 +79,7 @@ public class RedisRegistry implements RemoteRegistry {
         jedis.set(key, JSONUtil.toJsonStr(serviceMetaInfo));
 
         // 开启一个订阅频道
-        if (localServiceNodeSet.contains(key)) {
+        if (!localServiceNodeSet.contains(key)) {
             // 获取新jedis实例
             Jedis tempJedis = getJedis();
 

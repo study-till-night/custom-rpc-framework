@@ -1,10 +1,11 @@
-package com.shuking.rpccore.server;
+package com.shuking.rpccore.server.http;
 
+import com.shuking.rpccore.server.RpcServer;
 import io.vertx.core.Vertx;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class VertxHttpServer implements HttpServer {
+public class VertxHttpServer implements RpcServer {
     @Override
     public void doStart(int port) {
         // 获取http服务器

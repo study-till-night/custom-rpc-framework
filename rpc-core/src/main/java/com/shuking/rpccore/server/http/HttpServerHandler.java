@@ -1,4 +1,4 @@
-package com.shuking.rpccore.server;
+package com.shuking.rpccore.server.http;
 
 
 import com.shuking.rpccore.RpcCoreApplication;
@@ -52,6 +52,7 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
 
         log.info("received request: {},{}", httpServerRequest.method().toString(), httpServerRequest.uri());
 
+        // 对消息体进行处理
         httpServerRequest.bodyHandler(body -> {
             // 进行反序列化
             byte[] bytes = body.getBytes();
@@ -86,6 +87,8 @@ public class HttpServerHandler implements Handler<HttpServerRequest> {
 
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
                      InstantiationException e) {
+                rpcResponse.setMessage(e.getMessage());
+                rpcResponse.setException(e);
                 log.error("对方法进行反射时报错:{}", e.getMessage());
             }
             // 执行响应

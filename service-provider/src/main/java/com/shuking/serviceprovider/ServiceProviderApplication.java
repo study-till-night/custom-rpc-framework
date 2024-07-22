@@ -7,7 +7,8 @@ import com.shuking.rpccore.model.ServiceMetaInfo;
 import com.shuking.rpccore.registry.LocalRegistry;
 import com.shuking.rpccore.registry.RegistryFactory;
 import com.shuking.rpccore.registry.RemoteRegistry;
-import com.shuking.rpccore.server.VertxHttpServer;
+import com.shuking.rpccore.server.http.VertxHttpServer;
+import com.shuking.rpccore.server.tcp.VertxTcpServer;
 import com.shuking.serviceprovider.service.impl.PlayerServiceImpl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -34,8 +35,11 @@ public class ServiceProviderApplication {
         // 进行远程服务注册
         registry.registry(serviceMetaInfo);
 
-        VertxHttpServer vertxHttpServer = new VertxHttpServer();
-        vertxHttpServer.doStart(rpcConfig.getPort());
+        // VertxHttpServer vertxHttpServer = new VertxHttpServer();
+        // vertxHttpServer.doStart(rpcConfig.getPort());
+
+        VertxTcpServer vertxTcpServer = new VertxTcpServer();
+        vertxTcpServer.doStart(rpcConfig.getPort());
 
     }
 
