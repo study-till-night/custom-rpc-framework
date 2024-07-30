@@ -15,12 +15,14 @@ public class ServiceConsumerApplication {
         PlayerService playerServiceWithProxy = ServiceProxyFactory.getProxy(PlayerService.class);
 
         if (playerServiceWithProxy != null) {
-            List<Player> playerList = playerServiceWithProxy.searchPlayerList("shuking");
+            for (int i = 0; i < 1; i++) {
+                List<Player> playerList = playerServiceWithProxy.searchPlayerList("shuking");
 
-            if (playerList != null) {
-                log.info("call success");
-            } else {
-                log.error("call failed");
+                if (playerList != null) {
+                    log.info("call success");
+                } else {
+                    log.error("call failed");
+                }
             }
         }
     }

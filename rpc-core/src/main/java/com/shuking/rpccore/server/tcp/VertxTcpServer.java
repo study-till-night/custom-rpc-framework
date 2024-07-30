@@ -5,7 +5,6 @@ import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerFactory;
 import com.shuking.rpccore.server.RpcServer;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetServer;
 import lombok.extern.log4j.Log4j2;
 
@@ -13,6 +12,10 @@ import java.io.IOException;
 
 @Log4j2
 public class VertxTcpServer implements RpcServer {
+    public static void main(String[] args) {
+        new VertxTcpServer().doStart(8080);
+    }
+
     @Override
     public void doStart(int port) {
         Vertx vertx = Vertx.vertx();
@@ -20,13 +23,30 @@ public class VertxTcpServer implements RpcServer {
         // 创建tcp服务器
         NetServer netServer = vertx.createNetServer();
 
-        //  处理连接    一个连接包含多个请求
+        /*
+          处理连接    一个连接包含多个请求
+         */
         // netServer.connectHandler(netSocket -> {
         //     // 处理请求
         //     netSocket.handler(buffer -> {
-        //         log.info("received info from client:{}",buffer.toString());
+        //         // log.info("received info from client:{}",buffer.toString());
+        //         String validStr = "duck u!duck u!duck u!duck u!";
+        //         int length = validStr.getBytes().length;
+        //
         //         // 获取请求数据
         //         byte[] requestData = buffer.getBytes();
+        //
+        //         // 粘包半包测试
+        //         if (requestData.length < length) {
+        //             log.info("发生半包--length={}", requestData.length);
+        //             return;
+        //         }
+        //         if (requestData.length > length) {
+        //             log.info("发生粘包--length={}", requestData.length);
+        //             return;
+        //         }
+        //
+        //         log.info("接收数据正确!length={}", requestData.length);
         //         // 获取配置文件中的序列化器
         //         String serializerKey = RpcCoreApplication.getRpcConfig().getSerializer();
         //         Serializer serializer = SerializerFactory.getInstance(serializerKey);
@@ -34,13 +54,14 @@ public class VertxTcpServer implements RpcServer {
         //         try {
         //             byte[] response = getResponse(requestData, serializer);
         //             // 向客户端发送数据
-        //             netSocket.write(Buffer.buffer(response));
+        //             // netSocket.write(Buffer.buffer(response));
         //         } catch (IOException e) {
         //             log.error("tcp处理响应时报错--{}", e.getMessage());
         //         }
         //     });
         // });
 
+        // 设置请求处理器
         netServer.connectHandler(new TcpServerHandler());
 
         // 启动服务监听端口
@@ -64,9 +85,5 @@ public class VertxTcpServer implements RpcServer {
         // todo 构造响应数据体
         // todo 并执行业务逻辑
         return serializer.serialize("hello");
-    }
-
-    public static void main(String[] args) {
-        new VertxTcpServer().doStart(8080);
     }
 }

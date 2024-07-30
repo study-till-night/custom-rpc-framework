@@ -85,6 +85,7 @@ public class ProtocolMessageEncoder {
 
         // 设置请求体
         protocolMessage.setHeader(header);
+        // 读取请求体 顺便解决粘包问题 超出长度的部分将留给下次处理
         byte[] bodyBytes = buffer.getBytes(17, 17 + header.getBodyLength());
 
         ProtocolSerializerEnum serializerEnum = ProtocolSerializerEnum.getEnumByKey(header.getSerializer());

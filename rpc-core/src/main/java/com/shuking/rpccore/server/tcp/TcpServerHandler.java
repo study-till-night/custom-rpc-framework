@@ -1,6 +1,7 @@
 package com.shuking.rpccore.server.tcp;
 
 
+import com.shuking.rpccore.constant.ProtocolConstant;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.protocol.ProtocolMessage;
@@ -30,7 +31,26 @@ public class TcpServerHandler implements Handler<NetSocket> {
     @Override
     public void handle(NetSocket netSocket) {
         netSocket.handler(buffer -> {
-            log.info("接收到请求消息--{}",buffer.toString());
+            // 对半包和粘包进行判断
+            if (buffer == null || buffer.length() == 0) {
+                log.error("buffer为空!");
+                throw new RuntimeException("buffer为空!");
+            }
+
+            // 获取消息体body长度
+            int bodyLength = buffer.getInt(13);
+            // 判断半包问题
+            if (buffer.getBytes().length < ProtocolConstant.MESSAGE_HEADER_LENGTH + bodyLength) {
+                log.error("发生半包问题--length={}", buffer.getBytes().length);
+                throw new RuntimeException("发生半包问题!");
+            }
+            // 判断粘包问题
+            if (buffer.getBytes().length > ProtocolConstant.MESSAGE_HEADER_LENGTH + bodyLength) {
+                log.error("粘包问题--length={}", buffer.getBytes().length);
+                throw new RuntimeException("发生粘包问题!");
+            }
+
+            log.info("接收到请求消息,length={}", buffer.getBytes().length);
 
             ProtocolMessage<RpcRequest> protocolMessage;
 
@@ -51,7 +71,7 @@ public class TcpServerHandler implements Handler<NetSocket> {
 
                 Method method = serviceClass.getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsTypes());
                 // 得到方法执行结果
-                Object result = method.invoke(serviceClass.newInstance(), rpcRequest.getParams());
+                Object result = method.invoke(serviceClass.getDeclaredConstructor().newInstance(), rpcRequest.getParams());
 
                 rpcResponse.setData(result);
                 rpcResponse.setDataType(method.getReturnType());
@@ -69,7 +89,7 @@ public class TcpServerHandler implements Handler<NetSocket> {
             header.setType((byte) ProtocolTypeEnum.RESPONSE.getType());
             // 用于返回的协议消息
             ProtocolMessage<RpcResponse> responseProtocolMessage = new ProtocolMessage<>(header, rpcResponse);
-            log.info("返回给客户端的响应--{}",responseProtocolMessage.toString());
+            log.info("返回给客户端的响应--{}", responseProtocolMessage.toString());
             try {
                 // 将buffer写回
                 Buffer encodedBuffer = ProtocolMessageEncoder.encode(responseProtocolMessage);

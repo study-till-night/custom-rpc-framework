@@ -1,33 +1,23 @@
 package com.shuking.serviceconsumer.proxy;
 
-import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.shuking.rpccore.RpcCoreApplication;
 import com.shuking.rpccore.config.RpcConfig;
-import com.shuking.rpccore.constant.ProtocolConstant;
 import com.shuking.rpccore.constant.RpcConstants;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.model.ServiceMetaInfo;
-import com.shuking.rpccore.protocol.ProtocolMessage;
-import com.shuking.rpccore.protocol.ProtocolMessageEncoder;
-import com.shuking.rpccore.protocol.ProtocolSerializerEnum;
-import com.shuking.rpccore.protocol.ProtocolTypeEnum;
 import com.shuking.rpccore.registry.RegistryFactory;
 import com.shuking.rpccore.registry.RemoteRegistry;
 import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerFactory;
-import io.vertx.core.Vertx;
-import io.vertx.core.net.NetClient;
-import io.vertx.core.net.NetSocket;
+import com.shuking.rpccore.server.tcp.VertxTcpClient;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 /**
  * 动态代理 rpc请求发送的第一步
@@ -84,65 +74,16 @@ public class ServiceProxy implements InvocationHandler {
             return rpcResponse.getData();
              */
 
-        // 发送tcp请求
-        Vertx vertx = Vertx.vertx();
-        // 创建tcp客户端
-        NetClient netClient = vertx.createNetClient();
-        CompletableFuture<RpcResponse> responseFuture = new CompletableFuture<>();
-
-        // 连接到TCP服务端
-        netClient.connect(Integer.parseInt(serviceMetaInfo.getServicePort()), serviceMetaInfo.getServiceHost(), result -> {
-            if (result.succeeded()) {
-                log.info("客户端成功连接至TCP服务器");
-                NetSocket socket = result.result();
-
-                // 用于发送给TCP服务端的消息
-                ProtocolMessage<RpcRequest> protocolMessage = new ProtocolMessage<>();
-                ProtocolMessage.Header header = new ProtocolMessage.Header();
-
-                // 设置请求头
-                header.setMagic(ProtocolConstant.MAGIC_NUMBER);
-                header.setVersion(ProtocolConstant.VERSION_NUMBER);
-                header.setSerializer((byte) ProtocolSerializerEnum.getEnumByValue(RpcCoreApplication.getRpcConfig().getSerializer()).getKey());
-                header.setType((byte) ProtocolTypeEnum.REQUEST.getType());
-                header.setRequestId(IdUtil.getSnowflakeNextId());
-
-                protocolMessage.setHeader(header);
-                protocolMessage.setBody(rpcRequest);
-
-                // 发送消息
-                try {
-                    log.info("准备发送消息--");
-                    socket.write(ProtocolMessageEncoder.encode(protocolMessage));
-                    log.info("发送消息完毕--");
-                } catch (IOException e) {
-                    log.error("消息体编码出错--{}", e.getMessage());
-                    throw new RuntimeException(e);
-                }
-
-                // 接收消息
-                socket.handler(buffer -> {
-                    try {
-                        ProtocolMessage<RpcResponse> responseMessage = (ProtocolMessage<RpcResponse>) ProtocolMessageEncoder.decode(buffer);
-                        log.info("接收到响应消息--{}",responseMessage.getBody());
-                        responseFuture.complete(responseMessage.getBody());
-                    } catch (IOException e) {
-                        log.error("消息体解码出错--{}", e.getMessage());
-                        throw new RuntimeException(e);
-                    }
-                });
-            } else {
-                log.error("客户端连接至TCP服务器失败");
-            }
-        });
-
-        // 进行阻塞 等待获取数据
-        try {
-            RpcResponse rpcResponse = responseFuture.get();
-            netClient.close();
-            return rpcResponse.getData();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
+        // 发送请求得到响应
+        RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, serviceMetaInfo);
+        if (ObjectUtil.isNull(rpcResponse)) {
+            throw new RuntimeException("响应为空");
         }
+        if (rpcResponse.getException() != null) {
+            throw new RuntimeException("服务调用发生异常--" + rpcResponse.getMessage() + "--错误原因--" + rpcResponse.getException());
+        }
+
+        log.info("得到服务{}响应数据--{}", serviceMetaInfo.getServiceName(), rpcResponse.getData());
+        return rpcResponse.getData();
     }
 }

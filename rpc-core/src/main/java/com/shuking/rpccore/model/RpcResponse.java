@@ -19,7 +19,7 @@ public class RpcResponse implements Serializable {
     private Object data;
 
     /**
-     * 响应数据类似
+     * 响应数据类型
      */
     private Class<?> dataType;
 
