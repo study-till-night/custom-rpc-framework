@@ -1,6 +1,7 @@
 package com.shuking.rpccore.utils;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.shuking.rpccore.loadBalancer.LoadBalancer;
 import com.shuking.rpccore.serializer.Serializer;
 import lombok.extern.log4j.Log4j2;
 
@@ -28,7 +29,7 @@ public class SpiUtil {
     // spi需要扫描的路径
     private static final List<String> SCAN_DIR_LIST = Arrays.asList(SPI_CUSTOM_PATH, SPI_SYS_PATH);
     // spi需要加载的接口
-    private static final List<Class<?>> SCAN_CLASS_LIST = Arrays.asList(Serializer.class);
+    private static final List<Class<?>> SCAN_CLASS_LIST = Arrays.asList(Serializer.class, LoadBalancer.class);
     // K-- 要加载的接口全类名  V-- key与对应的实现类
     private static Map<String, Map<String, Class<?>>> loaderClassMap = new ConcurrentHashMap<>();
     // 缓存对象实例 K--要加载的接口全类名 v-- 实现类的对象实例

@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.shuking.rpccore.RpcCoreApplication;
 import com.shuking.rpccore.config.RpcConfig;
 import com.shuking.rpccore.constant.RpcConstants;
+import com.shuking.rpccore.loadBalancer.LoadBalancer;
+import com.shuking.rpccore.loadBalancer.LoadBalancerFactory;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.model.ServiceMetaInfo;
@@ -16,8 +18,10 @@ import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 动态代理 rpc请求发送的第一步
@@ -31,8 +35,10 @@ public class ServiceProxy implements InvocationHandler {
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
+        RpcConfig rpcConfig = RpcCoreApplication.getRpcConfig();
+
         // 获取配置文件中的序列化器
-        String serializerKey = RpcCoreApplication.getRpcConfig().getSerializer();
+        String serializerKey = rpcConfig.getSerializer();
         /*
          使用枚举类实现动态获取
         Serializer serializer = SerializerEnum.getSerializerByKey(serializerKey);
@@ -47,7 +53,6 @@ public class ServiceProxy implements InvocationHandler {
                 .params(args).build();
 
         // 使用远程注册中心
-        RpcConfig rpcConfig = RpcCoreApplication.getRpcConfig();
         RemoteRegistry registry = RegistryFactory.getInstance(rpcConfig.getRegistryConfig().getRegistryType());
         ServiceMetaInfo tempServiceInfo = ServiceMetaInfo.builder().serviceName(method.getDeclaringClass().getName())
                 .serviceVersion(RpcConstants.DEFAULT_SERVICE_VERSION)
@@ -59,9 +64,15 @@ public class ServiceProxy implements InvocationHandler {
             log.error("服务{}暂未有线上结点！", tempServiceInfo.getServiceName());
             throw new Exception(String.format("服务%s暂未有线上结点！", tempServiceInfo.getServiceName()));
         }
-
+        log.info("服务{}共有结点--{}", tempServiceInfo.getServiceName(), services);
         // 随机选取一个结点进行调用
-        ServiceMetaInfo serviceMetaInfo = services.get(new Random().nextInt(services.size()));
+        // ServiceMetaInfo serviceMetaInfo = services.get(new Random().nextInt(services.size()));
+
+        // 使用负载均衡
+        LoadBalancer loadBalancer = LoadBalancerFactory.getInstance(rpcConfig.getLoadBalancer());
+        HashMap<String, Object> requestParams = new HashMap<>();
+        requestParams.put("RequestTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        ServiceMetaInfo serviceMetaInfo = loadBalancer.select(requestParams, services);
         String serviceAddress = serviceMetaInfo.getServiceAddress();
         log.info("向服务{}发送请求,服务信息:{}, 目标地址:{}", tempServiceInfo.getServiceName(), serviceMetaInfo, serviceAddress);
 

@@ -4,16 +4,18 @@ import com.shuking.rpccore.serializer.serializerImpl.HessianSerializer;
 import com.shuking.rpccore.serializer.serializerImpl.JdkSerializer;
 import com.shuking.rpccore.serializer.serializerImpl.JsonSerializer;
 import com.shuking.rpccore.serializer.serializerImpl.KryoSerializer;
+import lombok.Getter;
 
+@Getter
 public enum SerializerEnum {
     JDK("jdk", new JdkSerializer()),
     JSON("json", new JsonSerializer()),
     KRYO("kyro", new KryoSerializer()),
     HESSIAN("hessian", new HessianSerializer());
 
-    public final String serializerName;
+    private final String serializerName;
 
-    public final Serializer serializerClass;
+    private final Serializer serializerClass;
 
     SerializerEnum(String serializerName, Serializer serializerClass) {
         this.serializerName = serializerName;

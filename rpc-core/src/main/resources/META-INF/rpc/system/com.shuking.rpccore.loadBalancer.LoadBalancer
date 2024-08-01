@@ -1,0 +1,3 @@
+roundRobin=com.shuking.rpccore.loadBalancer.impl.RoundRobinLoadBalancer
+random=com.shuking.rpccore.loadBalancer.impl.RandomLoadBalancer
+hash=com.shuking.rpccore.loadBalancer.impl.HashLoadBalancer

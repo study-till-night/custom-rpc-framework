@@ -1,5 +1,6 @@
 package com.shuking.rpccore.config;
 
+import com.shuking.rpccore.constant.LoadBalancerConstants;
 import com.shuking.rpccore.serializer.SerializerEnum;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -34,5 +35,10 @@ public class RpcConfig {
     /**
      * 选择的序列化器
      */
-    private String serializer = SerializerEnum.JDK.serializerName;
+    private String serializer = SerializerEnum.JDK.getSerializerName();
+
+    /**
+     * 负载均衡器
+     */
+    private String loadBalancer= LoadBalancerConstants.ROUND_ROBIN;
 }
