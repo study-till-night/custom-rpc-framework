@@ -3,7 +3,7 @@ package com.shuking.serviceconsumer;
 import com.shuking.common.model.Player;
 import com.shuking.common.services.PlayerService;
 import com.shuking.rpccore.utils.SpiUtil;
-import com.shuking.serviceconsumer.proxy.ServiceProxyFactory;
+import com.shuking.rpccore.proxy.ServiceProxyFactory;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;

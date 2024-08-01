@@ -1,4 +1,4 @@
-package com.shuking.serviceconsumer.proxy;
+package com.shuking.rpccore.proxy;
 
 import com.shuking.rpccore.RpcCoreApplication;
 

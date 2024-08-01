@@ -1,4 +1,4 @@
-package com.shuking.serviceconsumer.proxy;
+package com.shuking.rpccore.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

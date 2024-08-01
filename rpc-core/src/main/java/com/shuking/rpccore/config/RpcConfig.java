@@ -1,6 +1,7 @@
 package com.shuking.rpccore.config;
 
 import com.shuking.rpccore.constant.LoadBalancerConstants;
+import com.shuking.rpccore.constant.RetryStrategyConstants;
 import com.shuking.rpccore.serializer.SerializerEnum;
 import jakarta.annotation.Resource;
 import lombok.Data;
@@ -41,4 +42,9 @@ public class RpcConfig {
      * 负载均衡器
      */
     private String loadBalancer= LoadBalancerConstants.ROUND_ROBIN;
+
+    /**
+     * 重试机制
+     */
+    private String retry= RetryStrategyConstants.FIXED_INTERVAL;
 }

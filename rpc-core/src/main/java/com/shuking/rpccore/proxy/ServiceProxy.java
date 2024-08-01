@@ -1,4 +1,4 @@
-package com.shuking.serviceconsumer.proxy;
+package com.shuking.rpccore.proxy;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.shuking.rpccore.RpcCoreApplication;
@@ -11,6 +11,8 @@ import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.model.ServiceMetaInfo;
 import com.shuking.rpccore.registry.RegistryFactory;
 import com.shuking.rpccore.registry.RemoteRegistry;
+import com.shuking.rpccore.retry.RetryStrategy;
+import com.shuking.rpccore.retry.RetryStrategyFactory;
 import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerFactory;
 import com.shuking.rpccore.server.tcp.VertxTcpClient;
@@ -86,7 +88,9 @@ public class ServiceProxy implements InvocationHandler {
              */
 
         // 发送请求得到响应
-        RpcResponse rpcResponse = VertxTcpClient.doRequest(rpcRequest, serviceMetaInfo);
+        // 使用重试机制
+        RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetry());
+        RpcResponse rpcResponse = retryStrategy.doRemoteCall(() -> VertxTcpClient.doRequest(rpcRequest, serviceMetaInfo));
         if (ObjectUtil.isNull(rpcResponse)) {
             throw new RuntimeException("响应为空");
         }

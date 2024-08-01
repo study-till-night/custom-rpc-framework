@@ -2,6 +2,7 @@ package com.shuking.rpccore.utils;
 
 import cn.hutool.core.io.resource.ResourceUtil;
 import com.shuking.rpccore.loadBalancer.LoadBalancer;
+import com.shuking.rpccore.retry.RetryStrategy;
 import com.shuking.rpccore.serializer.Serializer;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,7 +30,7 @@ public class SpiUtil {
     // spi需要扫描的路径
     private static final List<String> SCAN_DIR_LIST = Arrays.asList(SPI_CUSTOM_PATH, SPI_SYS_PATH);
     // spi需要加载的接口
-    private static final List<Class<?>> SCAN_CLASS_LIST = Arrays.asList(Serializer.class, LoadBalancer.class);
+    private static final List<Class<?>> SCAN_CLASS_LIST = Arrays.asList(Serializer.class, LoadBalancer.class, RegistryUtil.class, RetryStrategy.class);
     // K-- 要加载的接口全类名  V-- key与对应的实现类
     private static Map<String, Map<String, Class<?>>> loaderClassMap = new ConcurrentHashMap<>();
     // 缓存对象实例 K--要加载的接口全类名 v-- 实现类的对象实例
@@ -88,10 +89,11 @@ public class SpiUtil {
 
     /**
      * 获取实例
+     *
      * @param classType 接口类型
-     * @param key   实现类类型
-     * @return  实现类实例
+     * @param key       实现类类型
      * @param <T>
+     * @return 实现类实例
      */
     public static <T> T getInstance(Class<T> classType, String key) {
         // 根据传入的接口类型得到kv实现类的map
@@ -110,8 +112,7 @@ public class SpiUtil {
             // 如果缓存中有则直接取缓存 否则加入缓存
             if (instanceCacheMap.containsKey(classTypeName)) {
                 instance = (T) instanceCacheMap.get(classTypeName);
-            }
-            else {
+            } else {
                 instance = (T) (implClass.getConstructor().newInstance());
                 instanceCacheMap.put(classTypeName, instance);
             }

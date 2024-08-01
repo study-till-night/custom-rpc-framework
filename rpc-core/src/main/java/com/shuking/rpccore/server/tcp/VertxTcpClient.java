@@ -112,6 +112,7 @@ public class VertxTcpClient {
                 socket.handler(tcpBufferHandlerWrapper);
             } else {
                 log.error("客户端连接至TCP服务器失败");
+                throw new RuntimeException("客户端连接至TCP服务器失败");
             }
         });
 
