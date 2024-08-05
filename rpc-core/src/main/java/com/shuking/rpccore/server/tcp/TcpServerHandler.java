@@ -1,7 +1,7 @@
 package com.shuking.rpccore.server.tcp;
 
 
-import com.shuking.rpccore.constant.ProtocolConstant;
+import com.shuking.rpccore.constant.ProtocolConstants;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.protocol.ProtocolMessage;
@@ -40,12 +40,12 @@ public class TcpServerHandler implements Handler<NetSocket> {
             // 获取消息体body长度
             int bodyLength = buffer.getInt(13);
             // 判断半包问题
-            if (buffer.getBytes().length < ProtocolConstant.MESSAGE_HEADER_LENGTH + bodyLength) {
+            if (buffer.getBytes().length < ProtocolConstants.MESSAGE_HEADER_LENGTH + bodyLength) {
                 log.error("发生半包问题--length={}", buffer.getBytes().length);
                 throw new RuntimeException("发生半包问题!");
             }
             // 判断粘包问题
-            if (buffer.getBytes().length > ProtocolConstant.MESSAGE_HEADER_LENGTH + bodyLength) {
+            if (buffer.getBytes().length > ProtocolConstants.MESSAGE_HEADER_LENGTH + bodyLength) {
                 log.error("粘包问题--length={}", buffer.getBytes().length);
                 throw new RuntimeException("发生粘包问题!");
             }

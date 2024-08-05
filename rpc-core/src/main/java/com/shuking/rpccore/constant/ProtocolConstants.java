@@ -1,6 +1,6 @@
 package com.shuking.rpccore.constant;
 
-public interface ProtocolConstant {
+public interface ProtocolConstants {
 
     /**
      * 消息头长度

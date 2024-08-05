@@ -3,7 +3,7 @@ package com.shuking.rpccore.server.tcp;
 import cn.hutool.core.util.IdUtil;
 import com.shuking.rpccore.RpcCoreApplication;
 import com.shuking.rpccore.config.RpcConfig;
-import com.shuking.rpccore.constant.ProtocolConstant;
+import com.shuking.rpccore.constant.ProtocolConstants;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.model.ServiceMetaInfo;
@@ -12,7 +12,6 @@ import com.shuking.rpccore.protocol.ProtocolMessageEncoder;
 import com.shuking.rpccore.protocol.ProtocolSerializerEnum;
 import com.shuking.rpccore.protocol.ProtocolTypeEnum;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.NetClient;
 import io.vertx.core.net.NetSocket;
 import lombok.extern.log4j.Log4j2;
@@ -78,8 +77,8 @@ public class VertxTcpClient {
                 ProtocolMessage.Header header = new ProtocolMessage.Header();
 
                 // 设置请求头
-                header.setMagic(ProtocolConstant.MAGIC_NUMBER);
-                header.setVersion(ProtocolConstant.VERSION_NUMBER);
+                header.setMagic(ProtocolConstants.MAGIC_NUMBER);
+                header.setVersion(ProtocolConstants.VERSION_NUMBER);
                 header.setSerializer((byte) ProtocolSerializerEnum.getEnumByValue(RpcCoreApplication.getRpcConfig().getSerializer()).getKey());
                 header.setType((byte) ProtocolTypeEnum.REQUEST.getType());
                 header.setRequestId(IdUtil.getSnowflakeNextId());

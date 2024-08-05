@@ -1,8 +1,9 @@
 package com.shuking.rpccore.utils;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.shuking.rpccore.fault.tolerant.TolerantStrategy;
 import com.shuking.rpccore.loadBalancer.LoadBalancer;
-import com.shuking.rpccore.retry.RetryStrategy;
+import com.shuking.rpccore.fault.retry.RetryStrategy;
 import com.shuking.rpccore.serializer.Serializer;
 import lombok.extern.log4j.Log4j2;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +29,17 @@ public class SpiUtil {
     // 自定义spi目录
     private static final String SPI_SYS_PATH = "META-INF/rpc/system/";
     // spi需要扫描的路径
-    private static final List<String> SCAN_DIR_LIST = Arrays.asList(SPI_CUSTOM_PATH, SPI_SYS_PATH);
+    private static final List<String> SCAN_DIR_LIST = new ArrayList<>(List.of(new String[]{SPI_CUSTOM_PATH, SPI_SYS_PATH}));
     // spi需要加载的接口
-    private static final List<Class<?>> SCAN_CLASS_LIST = Arrays.asList(Serializer.class, LoadBalancer.class, RegistryUtil.class, RetryStrategy.class);
+    private static final List<Class<?>> SCAN_CLASS_LIST = new ArrayList<>(List.of(Serializer.class, LoadBalancer.class,
+            RegistryUtil.class, RetryStrategy.class, TolerantStrategy.class));
     // K-- 要加载的接口全类名  V-- key与对应的实现类
-    private static Map<String, Map<String, Class<?>>> loaderClassMap = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Class<?>>> loaderClassMap = new ConcurrentHashMap<>();
     // 缓存对象实例 K--要加载的接口全类名 v-- 实现类的对象实例
-    private static Map<String, Object> instanceCacheMap = new ConcurrentHashMap<>();
+    private static final Map<String, Object> instanceCacheMap = new ConcurrentHashMap<>();
 
     /**
-     * 加载
+     * 加载全部接口
      */
     public static void loadAllInterface() {
         log.info("开始spi所有接口---");
@@ -61,7 +63,9 @@ public class SpiUtil {
         HashMap<String, Class<?>> kvImplementionMap = new HashMap<>();
         for (String dir : SCAN_DIR_LIST) {
             // 获取所有spi文件
+            System.out.println(dir + classType.getName());
             List<URL> spiFiles = ResourceUtil.getResources(dir + classType.getName());
+            System.out.println(spiFiles);
             for (URL spiFile : spiFiles) {
                 try {
                     InputStreamReader inputStreamReader = new InputStreamReader(spiFile.openStream());
@@ -124,8 +128,19 @@ public class SpiUtil {
         return null;
     }
 
+    /**
+     * 加载自定义spi文件
+     *
+     * @param path      文件路径
+     * @param classType 类
+     */
+    public static void loadCustom(String path, Class<?> classType) {
+        // todo 通过向rpc包中写文件的方式实现
+    }
+
     public static void main(String[] args) {
-        loadAllInterface();
-        System.out.println(getInstance(Serializer.class, "json").toString());
+        // loadAllInterface();
+        // System.out.println(getInstance(Serializer.class, "json").toString());
+        // loadCustom("service-consumer/src/main/resources/META-INF/custom/", Serializer.class);
     }
 }

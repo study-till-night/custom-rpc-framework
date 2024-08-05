@@ -1,8 +1,8 @@
-package com.shuking.rpccore.retry;
+package com.shuking.rpccore.fault.retry;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.shuking.rpccore.retry.impl.FixedIntervalRetry;
+import com.shuking.rpccore.fault.retry.impl.FixedIntervalRetry;
 import com.shuking.rpccore.utils.SpiUtil;
 
 /**

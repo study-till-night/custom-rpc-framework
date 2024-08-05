@@ -1,7 +1,6 @@
 package com.shuking.rpccore.protocol;
 
-import cn.hutool.core.util.IdUtil;
-import com.shuking.rpccore.constant.ProtocolConstant;
+import com.shuking.rpccore.constant.ProtocolConstants;
 import com.shuking.rpccore.model.RpcRequest;
 import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.serializer.Serializer;
@@ -67,7 +66,7 @@ public class ProtocolMessageEncoder {
 
         // 优先检验magic合法性
         byte magic = buffer.getByte(0);
-        if (magic != ProtocolConstant.MAGIC_NUMBER) {
+        if (magic != ProtocolConstants.MAGIC_NUMBER) {
             throw new RuntimeException("消息magic非法");
         }
 

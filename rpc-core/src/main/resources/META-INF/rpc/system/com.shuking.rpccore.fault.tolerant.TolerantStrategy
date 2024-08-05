@@ -1,0 +1,3 @@
+fastFail=com.shuking.rpccore.fault.tolerant.impl.FastFailTolerantStrategy
+transfer=com.shuking.rpccore.fault.tolerant.impl.TransferTolerantStrategy
+silence=com.shuking.rpccore.fault.tolerant.impl.SilenceTolerantStrategy

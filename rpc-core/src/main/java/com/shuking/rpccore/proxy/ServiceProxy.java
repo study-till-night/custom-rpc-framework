@@ -1,9 +1,14 @@
 package com.shuking.rpccore.proxy;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.github.rholder.retry.RetryException;
 import com.shuking.rpccore.RpcCoreApplication;
 import com.shuking.rpccore.config.RpcConfig;
 import com.shuking.rpccore.constant.RpcConstants;
+import com.shuking.rpccore.fault.retry.RetryStrategy;
+import com.shuking.rpccore.fault.retry.RetryStrategyFactory;
+import com.shuking.rpccore.fault.tolerant.TolerantStrategy;
+import com.shuking.rpccore.fault.tolerant.TolerantStrategyFactory;
 import com.shuking.rpccore.loadBalancer.LoadBalancer;
 import com.shuking.rpccore.loadBalancer.LoadBalancerFactory;
 import com.shuking.rpccore.model.RpcRequest;
@@ -11,8 +16,6 @@ import com.shuking.rpccore.model.RpcResponse;
 import com.shuking.rpccore.model.ServiceMetaInfo;
 import com.shuking.rpccore.registry.RegistryFactory;
 import com.shuking.rpccore.registry.RemoteRegistry;
-import com.shuking.rpccore.retry.RetryStrategy;
-import com.shuking.rpccore.retry.RetryStrategyFactory;
 import com.shuking.rpccore.serializer.Serializer;
 import com.shuking.rpccore.serializer.SerializerFactory;
 import com.shuking.rpccore.server.tcp.VertxTcpClient;
@@ -24,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 动态代理 rpc请求发送的第一步
@@ -90,7 +94,15 @@ public class ServiceProxy implements InvocationHandler {
         // 发送请求得到响应
         // 使用重试机制
         RetryStrategy retryStrategy = RetryStrategyFactory.getInstance(rpcConfig.getRetry());
-        RpcResponse rpcResponse = retryStrategy.doRemoteCall(() -> VertxTcpClient.doRequest(rpcRequest, serviceMetaInfo));
+        RpcResponse rpcResponse;
+        try {
+            rpcResponse = retryStrategy.doRemoteCall(() -> VertxTcpClient.doRequest(rpcRequest, serviceMetaInfo));
+        } catch (ExecutionException | RetryException e) {
+            // 重试过程发生异常 调用服务容错机制
+            TolerantStrategy tolerantStrategy = TolerantStrategyFactory.getInstance(rpcConfig.getTolerant());
+            rpcResponse = tolerantStrategy.doTolerant(new HashMap<>(), e);
+        }
+
         if (ObjectUtil.isNull(rpcResponse)) {
             throw new RuntimeException("响应为空");
         }

@@ -1,6 +1,6 @@
 package com.shuking.rpccore.server.tcp;
 
-import com.shuking.rpccore.constant.ProtocolConstant;
+import com.shuking.rpccore.constant.ProtocolConstants;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.parsetools.RecordParser;
@@ -29,7 +29,7 @@ public class TcpBufferHandlerWrapper implements Handler<Buffer> {
 
     private RecordParser initRecordParser(Handler<Buffer> bufferHandler) {
         // 消息头parser
-        RecordParser parser = RecordParser.newFixed(ProtocolConstant.MESSAGE_HEADER_LENGTH);
+        RecordParser parser = RecordParser.newFixed(ProtocolConstants.MESSAGE_HEADER_LENGTH);
 
         parser.setOutput(new Handler<>() {
             int size = -1;
@@ -52,7 +52,7 @@ public class TcpBufferHandlerWrapper implements Handler<Buffer> {
                     bufferHandler.handle(resultBuffer);
 
                     // 重置
-                    parser.fixedSizeMode(ProtocolConstant.MESSAGE_HEADER_LENGTH);
+                    parser.fixedSizeMode(ProtocolConstants.MESSAGE_HEADER_LENGTH);
                     size = -1;
                     resultBuffer = Buffer.buffer();
                 }

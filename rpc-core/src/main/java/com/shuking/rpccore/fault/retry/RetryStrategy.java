@@ -1,4 +1,4 @@
-package com.shuking.rpccore.retry;
+package com.shuking.rpccore.fault.retry;
 
 import com.github.rholder.retry.RetryException;
 import com.shuking.rpccore.model.RpcResponse;
