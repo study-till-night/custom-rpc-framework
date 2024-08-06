@@ -1,12 +1,9 @@
 spring:
   application:
-    name: playerService
-
+    name: service-consumer
 #rpc:
 #  registry:
 #    center-address: 127.0.0.1
-#    center-port: 6379
+#    timeout: 20000
 #    registry-type: redis
-#    timeout: 30000
-server:
-  port: 8081
+#    center-port: 6379

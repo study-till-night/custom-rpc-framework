@@ -26,7 +26,7 @@
         </dependency>
         <dependency>
             <groupId>com.shuking</groupId>
-            <artifactId>rpc-core</artifactId>
+            <artifactId>rpc-spring-boot-starter</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

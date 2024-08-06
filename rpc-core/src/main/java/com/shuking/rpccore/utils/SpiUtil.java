@@ -1,9 +1,9 @@
 package com.shuking.rpccore.utils;
 
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.shuking.rpccore.fault.retry.RetryStrategy;
 import com.shuking.rpccore.fault.tolerant.TolerantStrategy;
 import com.shuking.rpccore.loadBalancer.LoadBalancer;
-import com.shuking.rpccore.fault.retry.RetryStrategy;
 import com.shuking.rpccore.serializer.Serializer;
 import lombok.extern.log4j.Log4j2;
 
@@ -63,9 +63,7 @@ public class SpiUtil {
         HashMap<String, Class<?>> kvImplementionMap = new HashMap<>();
         for (String dir : SCAN_DIR_LIST) {
             // 获取所有spi文件
-            System.out.println(dir + classType.getName());
             List<URL> spiFiles = ResourceUtil.getResources(dir + classType.getName());
-            System.out.println(spiFiles);
             for (URL spiFile : spiFiles) {
                 try {
                     InputStreamReader inputStreamReader = new InputStreamReader(spiFile.openStream());
@@ -131,10 +129,10 @@ public class SpiUtil {
     /**
      * 加载自定义spi文件
      *
-     * @param path      文件路径
-     * @param classType 类
+     * @param key       键值
+     * @param implClass 实现类路径
      */
-    public static void loadCustom(String path, Class<?> classType) {
+    public static void loadCustom(String key, Class<?> implClass) {
         // todo 通过向rpc包中写文件的方式实现
     }
 
